@@ -1,27 +1,3 @@
-Yes, we can absolutely do this. Since you are uploading to GitHub manually, the easiest way is to combine all that React code into a **single `index.html` file** that uses libraries via CDN (Content Delivery Network). This means you won't need to run any build commands like `npm run dev`.
-
-### **Instructions for You**
-
-1. **File Structure on GitHub:**
-Your repository should look exactly like this:
-```text
-/ (root)
-  ├── index.html       <-- (The big code block below)
-  └── assets/          <-- (Create this folder)
-      ├── music/
-      │   ├── background_theme.mp3
-      │   └── pal_pal_dil_ke_paas.mp3
-      ├── suspect_identification.gif
-      ├── delhi_meetup.jpg
-      └── (add your other photos here)
-
-```
-
-
-2. **The Code:**
-Copy the entire code block below and save it as `index.html`. I have merged all your components (`App`, `Login`, `Evidence`, `Summons`, etc.) into this one file.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -495,5 +471,3 @@ Copy the entire code block below and save it as `index.html`. I have merged all 
     </script>
 </body>
 </html>
-
-```
