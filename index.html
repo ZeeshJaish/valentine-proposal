@@ -3,26 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Official Summons: Urgent</title>
+    <title>Official Summons: CAPYBARA-96958</title>
     <style>
         /* General Styling */
         body {
-            font-family: 'Courier New', Courier, monospace; /* Typewriter feel for the legal part */
-            background-color: #fce4ec;
+            font-family: 'Courier New', Courier, monospace;
             margin: 0;
             padding: 0;
             overflow-x: hidden;
             text-align: center;
+            
+            /* --- CRIME SCENE BACKGROUND CHANGE --- */
+            /* This sets a background image of a detective board */
+            background: url('https://images.unsplash.com/photo-1599940824399-b87987ceb72a?q=80&w=2000&auto=format&fit=crop') no-repeat center center fixed; 
+            background-size: cover; 
+            /* Adds a dark tint so the white paper pops out more */
+            box-shadow: inset 0 0 0 1000px rgba(0,0,0,0.6);
+            color: #333;
         }
 
         h1, h2, h3 { color: #d81b60; }
-        p { color: #555; font-size: 1.1em; }
+        p { color: #333; font-size: 1.1em; font-weight: bold; }
 
         /* SECTION 1: The Court Summons (Modal) */
         #summons-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.85); /* Dark background to focus on the paper */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -30,66 +37,93 @@
         }
         
         .legal-paper {
-            background: #fffaf0;
+            background: #fffaf0; /* Manila folder / Paper color */
             padding: 40px;
             width: 80%;
             max-width: 500px;
-            border: 2px solid #000;
-            box-shadow: 10px 10px 0px rgba(0,0,0,0.5);
+            border: 1px solid #ccc;
+            /* Creates a stacked paper effect */
+            box-shadow: 
+                0 1px 1px rgba(0,0,0,0.15), 
+                0 10px 0 -5px #eee, 
+                0 10px 1px -4px rgba(0,0,0,0.15), 
+                0 20px 0 -10px #eee, 
+                0 20px 1px -9px rgba(0,0,0,0.15);
             text-align: left;
+            position: relative;
+            transform: rotate(-1deg); /* Slight tilt for realism */
         }
 
+        /* The "Top Secret" Stamp */
         .stamp {
-            color: red;
-            border: 3px solid red;
+            color: #d32f2f;
+            border: 4px solid #d32f2f;
             display: inline-block;
-            padding: 5px 10px;
-            font-weight: bold;
-            font-size: 20px;
-            transform: rotate(-10deg);
+            padding: 5px 15px;
+            font-weight: 900;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transform: rotate(-15deg);
             margin-bottom: 20px;
+            opacity: 0.8;
+            mask-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/8399/grunge.png'); /* Adds grunge texture if supported */
+            -webkit-mask-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/8399/grunge.png');
         }
 
         .btn-legal {
-            background: #000;
+            background: #111;
             color: #fff;
-            border: none;
+            border: 2px solid #111;
             padding: 15px 30px;
             font-size: 16px;
             cursor: pointer;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 25px;
             font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-legal:hover {
+            background: #fff;
+            color: #111;
         }
 
         /* SECTION 2: Memory Lane (Hidden initially) */
         #main-content {
-            display: none; /* Hidden until summons is accepted */
+            display: none;
             padding: 40px 20px;
-            font-family: 'Arial', sans-serif; /* Switch to softer font */
+            /* Keeps the background visible but content readable */
+            background: rgba(255, 255, 255, 0.9); 
+            min-height: 100vh;
         }
 
         .memory-card {
             background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(216, 27, 96, 0.2);
-            margin: 30px auto;
-            max-width: 600px;
-            transform: translateY(20px);
-            opacity: 0;
-            animation: fadeUp 1s forwards;
+            padding: 15px 15px 40px 15px; /* Extra bottom padding like a polaroid */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin: 40px auto;
+            max-width: 500px;
+            transform: rotate(-2deg); /* Tilted like a photo thrown on table */
+            transition: transform 0.3s;
+        }
+
+        .memory-card:nth-child(even) {
+            transform: rotate(2deg); /* Alternate tilt */
+        }
+
+        .memory-card:hover {
+            transform: scale(1.02) rotate(0deg);
+            z-index: 10;
         }
 
         .memory-img {
             width: 100%;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        @keyframes fadeUp {
-            to { opacity: 1; transform: translateY(0); }
+            border: 1px solid #eee;
+            margin-bottom: 10px;
         }
 
         /* SECTION 3: The Proposal */
@@ -103,8 +137,8 @@
             justify-content: center;
             gap: 20px;
             margin-top: 30px;
-            position: relative; /* Needed for absolute positioning of No button */
-            height: 100px; /* Space for button to move */
+            position: relative;
+            height: 100px;
         }
 
         .btn-yes {
@@ -113,23 +147,22 @@
             padding: 15px 40px;
             font-size: 20px;
             border: none;
-            border-radius: 50px;
+            border-radius: 5px; /* Less rounded, more like a label */
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(216, 27, 96, 0.4);
-            transition: transform 0.2s;
             z-index: 10;
         }
 
         .btn-no {
-            background-color: #888;
+            background-color: #555;
             color: white;
             padding: 15px 40px;
             font-size: 20px;
             border: none;
-            border-radius: 50px;
+            border-radius: 5px;
             cursor: pointer;
-            position: absolute; /* Allows it to move freely */
-            transition: all 0.3s ease; /* Smooth movement */
+            position: absolute;
+            transition: all 0.2s ease;
         }
 
         /* Success Message */
@@ -144,8 +177,6 @@
             flex-direction: column;
             z-index: 2000;
         }
-        
-        #success-message h1 { color: white; font-size: 3em; }
     </style>
 </head>
 <body>
@@ -154,82 +185,76 @@
         <div class="legal-paper">
             <div class="stamp">TOP SECRET</div>
             <h2>OFFICIAL SUMMONS</h2>
-            <p><strong>CASE ID:</strong> LOVE-2024</p>
-            <p><strong>DEFENDANT:</strong> My Future Valentine</p>
+            <p><strong>CASE ID:</strong> CAPYBARA-96958</p>
+            <p><strong>DEFENDANT:</strong> Bhondu Nyanika</p>
             <p><strong>CHARGE:</strong> Grand Theft Heart.</p>
-            <p>You are accused of stealing my heart and refusing to give it back. The court demands you review the evidence immediately.</p>
+            <hr style="border: 1px dashed #999; margin: 20px 0;">
+            <p style="font-weight: normal;">
+                You are accused of stealing my heart and refusing to give it back. 
+                Initial investigations reveal multiple counts of excessive cuteness.
+                The court demands you review the evidence immediately.
+            </p>
             <button class="btn-legal" onclick="startJourney()">REVIEW EVIDENCE</button>
         </div>
     </div>
 
     <div id="main-content">
-        <h1>The Evidence</h1>
-        <p>Your Honor, please review the following exhibits...</p>
+        <h1>CASE EVIDENCE FILE</h1>
+        <p>Investigator's Notes: "Undeniable proof of connection."</p>
 
-        <div class="memory-card" style="animation-delay: 0.2s;">
-            <h3>Exhibit A: The Beginning</h3>
+        <div class="memory-card">
             <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3R6bWJ6ZHg4d3B6eG84eG84eG84eG84eG84/l0HlO3BJ8LxrZ4V3y/giphy.gif" alt="Cute Memory" class="memory-img">
-            <p>Remember when we first started talking? I knew right away you were trouble.</p>
+            <p><strong>Exhibit A:</strong> The First Interaction. Suspect showed immediate charm.</p>
         </div>
 
-        <div class="memory-card" style="animation-delay: 0.5s;">
-            <h3>Exhibit B: The Crime Scene</h3>
+        <div class="memory-card">
             <img src="https://media.giphy.com/media/26FLdmIp6wJr91JAI/giphy.gif" alt="Funny Memory" class="memory-img">
-            <p>This is where you completely won me over. Look at that smile!</p>
+            <p><strong>Exhibit B:</strong> The Crime Scene. Suspect was caught smiling illegally.</p>
         </div>
 
         <div class="proposal-section">
-            <h1>The Verdict</h1>
-            <p>Considering the evidence, there is only one acceptable sentence:</p>
+            <h1>FINAL VERDICT</h1>
+            <p>Based on the evidence, the jury finds the defendant GUILTY of being adorable.</p>
             <h2>Will you be my Valentine?</h2>
             
             <div class="buttons">
-                <button class="btn-yes" onclick="acceptProposal()">YES, I GUESS 💖</button>
-                <button class="btn-no" id="noBtn" onmouseover="moveButton()">NO</button>
+                <button class="btn-yes" onclick="acceptProposal()">YES, I CONFESS 💖</button>
+                <button class="btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NO</button>
             </div>
         </div>
     </div>
 
     <div id="success-message">
-        <h1>YAY! ❤️</h1>
-        <p>Date night details coming soon...</p>
-        <img src="https://media.giphy.com/media/TdfyKrN7HGTIY/giphy.gif" style="max-width: 300px; border-radius: 20px;">
+        <h1>CASE CLOSED! ❤️</h1>
+        <p>The defendant has accepted the plea deal.</p>
+        <p>Lifetime sentence of love.</p>
+        <img src="https://media.giphy.com/media/TdfyKrN7HGTIY/giphy.gif" style="max-width: 300px; border-radius: 20px; margin-top: 20px;">
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <script>
-        // Function to start the journey (Hide summons, show content)
         function startJourney() {
             document.getElementById('summons-overlay').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
-            
-            // Play background music if you want (Optional)
-            // var audio = new Audio('song.mp3');
-            // audio.play();
         }
 
-        // Function to move the 'No' button
         function moveButton() {
-            var x = Math.random() * (window.innerWidth - 100); // Random X position
-            var y = Math.random() * (window.innerHeight - 100); // Random Y position
+            var x = Math.random() * (window.innerWidth - 100);
+            var y = Math.random() * (window.innerHeight - 100);
             
             var btn = document.getElementById('noBtn');
-            btn.style.position = 'fixed'; // Change to fixed to allow movement anywhere
+            btn.style.position = 'fixed';
             btn.style.left = x + 'px';
             btn.style.top = y + 'px';
         }
 
-        // Function when she clicks Yes
         function acceptProposal() {
-            // Trigger Confetti
             confetti({
                 particleCount: 150,
                 spread: 70,
                 origin: { y: 0.6 }
             });
-
-            // Show success message after a short delay
             setTimeout(function() {
                 document.getElementById('success-message').style.display = 'flex';
             }, 1000);
