@@ -6,10 +6,14 @@
     <title>Official Summons: CAPYBARA-96958</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
@@ -17,6 +21,8 @@
         .font-courier { font-family: 'Courier Prime', monospace; }
         .font-inter { font-family: 'Inter', sans-serif; }
         .stamp-rotate { transform: rotate(-10deg); }
+        
+        /* Animation Keyframes */
         @keyframes subtle-shake {
             0% { transform: translateX(0) rotate(0); }
             25% { transform: translateX(-4px) rotate(-4deg); }
@@ -109,12 +115,13 @@
             );
         };
 
-        // --- HELPERS ---
+        // --- HELPERS FOR EVIDENCE ---
         const TypewriterText = ({ texts }) => {
             const [text, setText] = useState('');
             const [isDeleting, setIsDeleting] = useState(false);
             const [loopNum, setLoopNum] = useState(0);
             const [typingSpeed, setTypingSpeed] = useState(100);
+
             useEffect(() => {
                 const i = loopNum % texts.length;
                 const fullText = texts[i];
@@ -123,11 +130,15 @@
                     setTypingSpeed(isDeleting ? 40 : 100);
                 };
                 if (!isDeleting && text === fullText) {
-                    const timeout = setTimeout(() => setIsDeleting(true), 2000); return () => clearTimeout(timeout);
+                    const timeout = setTimeout(() => setIsDeleting(true), 2000);
+                    return () => clearTimeout(timeout);
                 } else if (isDeleting && text === '') {
-                    setIsDeleting(false); setLoopNum(prev => prev + 1); return;
+                    setIsDeleting(false);
+                    setLoopNum(prev => prev + 1);
+                    return;
                 }
-                const timer = setTimeout(handleType, typingSpeed); return () => clearTimeout(timer);
+                const timer = setTimeout(handleType, typingSpeed);
+                return () => clearTimeout(timer);
             }, [text, isDeleting, loopNum, texts, typingSpeed]);
             return <span>{text}<span className="animate-pulse text-red-500 font-bold">|</span></span>;
         };
@@ -136,7 +147,8 @@
             const words = ["LOVE", "PYAAR", "ISHQ", "AMOUR", "AMOR", "LIEBE", "AI", "CINTA", "MAHAL", "SARANG"];
             const [index, setIndex] = useState(0);
             useEffect(() => {
-                const interval = setInterval(() => setIndex(prev => (prev + 1) % words.length), 1500); return () => clearInterval(interval);
+                const interval = setInterval(() => setIndex(prev => (prev + 1) % words.length), 1500);
+                return () => clearInterval(interval);
             }, []);
             return <span className="inline-block min-w-[80px] text-center font-black text-red-600 animate-pulse">{words[index]}</span>;
         };
@@ -144,6 +156,7 @@
         const CustomAudioPlayer = ({ src, onPlay, onPause }) => {
             const audioRef = useRef(null);
             const [isPlaying, setIsPlaying] = useState(false);
+            
             const togglePlay = () => {
                 if (!audioRef.current) return;
                 if (isPlaying) audioRef.current.pause();
@@ -151,6 +164,7 @@
             };
             const handlePlay = () => { setIsPlaying(true); onPlay(); };
             const handlePause = () => { setIsPlaying(false); onPause(); };
+
             return (
                 <div className="bg-stone-100 rounded-lg p-3 border-2 border-stone-300 shadow-inner flex items-center gap-3 w-full max-w-xs mx-auto">
                     <audio ref={audioRef} src={src} onPlay={handlePlay} onPause={handlePause} onEnded={handlePause} className="hidden" />
@@ -172,6 +186,7 @@
         const ScratchCard = () => {
             const canvasRef = useRef(null);
             const [isRevealed, setIsRevealed] = useState(false);
+
             const triggerKissRain = () => {
                 const rainContainer = document.createElement('div');
                 Object.assign(rainContainer.style, { position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: '9999', overflow: 'hidden' });
@@ -188,11 +203,13 @@
                 }
                 setTimeout(() => document.body.contains(rainContainer) && document.body.removeChild(rainContainer), 5000);
             };
+
             useEffect(() => {
                 const canvas = canvasRef.current;
                 if (!canvas || isRevealed) return;
                 const ctx = canvas.getContext('2d');
                 if (!ctx) return;
+                
                 const parent = canvas.parentElement;
                 canvas.width = parent.clientWidth;
                 canvas.height = parent.clientHeight;
@@ -205,26 +222,45 @@
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText("SCRATCH ME!", canvas.width / 2, canvas.height / 2);
-                let isDrawing = false; let scratchedPixels = 0; const totalPixels = canvas.width * canvas.height;
+
+                let isDrawing = false;
+                let scratchedPixels = 0;
+                const totalPixels = canvas.width * canvas.height;
+
                 const getPos = (e) => {
                     const rect = canvas.getBoundingClientRect();
                     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
                     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                     return { x: clientX - rect.left, y: clientY - rect.top };
                 };
+
                 const scratch = (x, y) => {
                     ctx.globalCompositeOperation = 'destination-out';
-                    ctx.beginPath(); ctx.arc(x, y, 20, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(x, y, 20, 0, Math.PI * 2);
+                    ctx.fill();
                     scratchedPixels += 1500; 
                     if (scratchedPixels > totalPixels * 0.4 && !isRevealed) {
-                        setIsRevealed(true); canvas.style.opacity = '0'; triggerKissRain(); setTimeout(() => canvas.style.display = 'none', 500);
+                        setIsRevealed(true);
+                        canvas.style.opacity = '0';
+                        triggerKissRain();
+                        setTimeout(() => canvas.style.display = 'none', 500);
                     }
                 };
-                const start = () => isDrawing = true; const end = () => isDrawing = false;
-                const move = (e) => { if (!isDrawing) return; e.preventDefault(); const { x, y } = getPos(e); scratch(x, y); };
+
+                const start = () => isDrawing = true;
+                const end = () => isDrawing = false;
+                const move = (e) => {
+                    if (!isDrawing) return;
+                    e.preventDefault();
+                    const { x, y } = getPos(e);
+                    scratch(x, y);
+                };
+
                 canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move); canvas.addEventListener('mouseup', end);
                 canvas.addEventListener('touchstart', start); canvas.addEventListener('touchmove', move); canvas.addEventListener('touchend', end);
             }, [isRevealed]);
+
             return (
                 <div className="relative w-full h-32 bg-pink-100 rounded-lg overflow-hidden border-2 border-dashed border-pink-300 shadow-inner select-none">
                     <div className="absolute inset-0 flex flex-col items-center justify-center z-0">
@@ -247,9 +283,209 @@
                 { id: 6, type: 'photo', title: 'Characteristic about Suspect', content: 'assets/suspect_characteristic.jpg', subtext: 'mujrim ko gussa bohot aata lekin khana milte shant ho jata', date: 'Day 45' },
                 { id: 7, type: 'scratch', title: 'Current Status', content: '', subtext: 'Scratch to reveal hidden truth.', date: 'Present' }
             ];
+
             return (
                 <div className="max-w-4xl mx-auto px-4 py-16 relative">
                     <div className="absolute left-9 md:left-1/2 top-0 bottom-0 w-0.5 md:w-1 bg-stone-400 transform -translate-x-1/2 md:-translate-x-1/2 z-0 opacity-50"></div>
                     <div className="relative z-10">
                         <h2 className="text-4xl font-bold text-center text-stone-200 mb-16 font-courier uppercase tracking-widest drop-shadow-md">
-                            <span className="bg
+                            <span className="bg-red-700 px-4 py-1 shadow-lg border-2 border-black">Case Evidence</span>
+                        </h2>
+                        {evidenceLog.map((item, index) => {
+                            const isLeft = index % 2 === 0;
+                            return (
+                                <div key={item.id} className={`flex md:justify-between items-center w-full mb-16 relative ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} flex-col`}>
+                                    <div className="hidden md:block w-5/12" />
+                                    <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 w-6 h-6 md:w-8 md:h-8 rounded-full bg-red-600 border-4 border-stone-200 shadow-lg z-10 flex items-center justify-center">
+                                        <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-black/30 rounded-full" />
+                                    </div>
+                                    <div className="w-full pl-16 pr-4 md:pl-0 md:pr-0 md:w-5/12 transform transition-all hover:scale-[1.02] duration-300">
+                                        <div className={`p-4 rounded-sm shadow-[6px_6px_0px_rgba(0,0,0,0.4)] border-2 border-stone-300 relative ${item.type === 'message' || item.type === 'audio' ? 'bg-blue-50' : 'bg-stone-50'}`}>
+                                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-12 h-6 bg-yellow-100/80 rotate-[-2deg] shadow-sm backdrop-blur-sm border border-yellow-200/50"></div>
+                                            {item.date && <div className="absolute -top-3 -right-2 bg-red-700 text-white text-[10px] md:text-xs font-courier px-2 py-1 rotate-3 shadow-md border border-white">{item.date}</div>}
+                                            <h3 className="font-bold font-courier text-red-700 text-lg mb-3 border-b-2 border-red-100 pb-1">{item.title}</h3>
+                                            
+                                            {item.type === 'photo' && <div className="bg-white p-2 border border-gray-200 shadow-inner mb-3 rotate-1"><img src={item.content} alt={item.title} className="w-full h-auto object-cover filter sepia-[0.2] contrast-110" /></div>}
+                                            
+                                            {item.type === 'message' && <div className="bg-white border border-gray-300 rounded-2xl rounded-tl-none p-4 mb-3 relative font-inter text-sm text-gray-800 shadow-sm mx-2">"{item.content}"</div>}
+                                            
+                                            {item.type === 'audio' && <div className="bg-stone-200 border border-stone-400 rounded-lg p-3 mb-3 relative mx-2 shadow-inner">{item.customRender}<CustomAudioPlayer src={item.content} onPlay={onAudioPlay} onPause={onAudioPause} /></div>}
+                                            
+                                            {item.type === 'location' && <div className="bg-yellow-50 border-2 border-dashed border-yellow-300 p-4 mb-3 flex items-start gap-3 rounded-lg"><span className="text-2xl animate-bounce">📍</span><div className="font-bold text-gray-800 font-courier text-lg leading-tight flex items-center">{Array.isArray(item.content) ? <TypewriterText texts={item.content} /> : item.content}</div></div>}
+                                            
+                                            {item.type === 'scratch' && <div className="p-1 mb-3"><ScratchCard /></div>}
+                                            
+                                            {item.subtext && <p className="text-xs md:text-sm text-gray-500 font-courier mt-2 italic border-t border-gray-100 pt-2">{item.subtext}</p>}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        };
+
+        // --- COMPONENT: PROPOSAL (FIXED BUTTON) ---
+        const Proposal = ({ onAccept }) => {
+            const [noBtnPosition, setNoBtnPosition] = useState({ top: 'auto', left: 'auto', position: 'static' });
+            const [currentGif, setCurrentGif] = useState(null);
+            const [currentText, setCurrentText] = useState("DON'T DO IT!");
+            const [shakeKey, setShakeKey] = useState(0);
+
+            const FUNNY_TEXTS = ["chal nikaaaal", "futo yaha se", "challl naaa", "abhi batau kya", "poi poi", "aata na jataa chunao chin chata"];
+            const REACTION_GIF = "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDVqZ2p2eWVyZG5jaDJha2JyMjI3bTBsdW03YXY5eGQwNzQyOGJjYSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/rCxogJBzaeZuU/giphy.gif";
+
+            // Fixed Move Function (prevents default behavior)
+            const moveButton = (e) => {
+                // Prevent any accidental clicks or touch propagation
+                if (e && e.preventDefault) e.preventDefault();
+                if (e && e.stopPropagation) e.stopPropagation();
+
+                const x = Math.random() * (window.innerWidth - 150);
+                const y = Math.random() * (window.innerHeight - 60);
+                setNoBtnPosition({ top: `${y}px`, left: `${x}px`, position: 'fixed' });
+                setCurrentText(FUNNY_TEXTS[Math.floor(Math.random() * FUNNY_TEXTS.length)]);
+                setShakeKey(prev => prev + 1);
+                setCurrentGif(REACTION_GIF);
+            };
+
+            return (
+                <div className="py-16 pb-32 text-center max-w-3xl mx-auto px-4 animate-in fade-in duration-1000 delay-1000 fill-mode-backwards relative">
+                    {currentGif && (
+                        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-in fade-in zoom-in duration-300 drop-shadow-2xl">
+                            <div className="bg-white p-2 rounded-lg transform rotate-[-3deg] shadow-xl">
+                                <img src={currentGif} alt="Reaction" className="w-48 h-48 md:w-64 md:h-64 object-cover rounded-md border border-gray-200" />
+                                <p key={shakeKey} className="font-courier font-bold text-red-600 mt-2 text-lg uppercase" style={{ animation: 'subtle-shake 0.4s ease-in-out' }}>{currentText}</p>
+                            </div>
+                        </div>
+                    )}
+                    <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-2xl border-4 border-pink-200 relative z-10">
+                        <h1 className="text-3xl font-bold text-gray-800 mb-4 font-courier uppercase tracking-widest">The Verdict</h1>
+                        <p className="text-xl text-gray-600 mb-8 font-inter">Considering the overwhelming evidence presented today, there is only one acceptable sentence:</p>
+                        <h2 className="text-4xl md:text-5xl font-extrabold text-pink-600 mb-12 font-inter drop-shadow-sm">Will you be my Valentine?</h2>
+                        <div className="flex justify-center items-center gap-8 h-24 relative">
+                            {/* YES BUTTON */}
+                            <button onClick={onAccept} className="z-10 bg-pink-600 text-white hover:bg-pink-700 font-bold py-4 px-10 rounded-full text-xl transform hover:scale-110 shadow-lg">YES, I GUESS 💖</button>
+                            
+                            {/* NO BUTTON - FIXED HANDLERS */}
+                            <button 
+                                onMouseEnter={moveButton} 
+                                onTouchStart={moveButton} 
+                                onClick={moveButton} /* Just in case a click gets through */
+                                style={{ position: noBtnPosition.position, top: noBtnPosition.top, left: noBtnPosition.left, transition: 'all 0.2s ease-out' }} 
+                                className="bg-gray-400 text-white font-bold py-4 px-10 rounded-full text-xl cursor-not-allowed hover:bg-gray-500 shadow-md z-20"
+                            >
+                                NO
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- COMPONENT: SUCCESS ---
+        const Success = () => {
+            useEffect(() => {
+                const duration = 3000;
+                const end = Date.now() + duration;
+                const frame = () => {
+                    if (window.confetti) {
+                        window.confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#d81b60', '#ff80ab', '#ffffff'] });
+                        window.confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#d81b60', '#ff80ab', '#ffffff'] });
+                    }
+                    if (Date.now() < end) requestAnimationFrame(frame);
+                };
+                frame();
+            }, []);
+
+            return (
+                <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-pink-600 text-white animate-in zoom-in duration-500 p-4 text-center">
+                    <h1 className="text-6xl md:text-8xl font-black mb-6 drop-shadow-lg font-inter animate-bounce">YAY! ❤️</h1>
+                    <p className="text-2xl md:text-3xl mb-8 font-courier font-bold tracking-wider">Date night details incoming...</p>
+                    <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform rotate-2 hover:rotate-0 transition-transform duration-300">
+                        <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXZzZXN0Z2RkdGJ4aDhlc2JucDh0Y3dzMDdleDIxMXBvNGI2ZmdvaCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/MDJ9IbxxvDUQM/giphy.gif" alt="Celebration" className="max-w-[300px] w-full h-auto" />
+                    </div>
+                </div>
+            );
+        };
+
+        // --- MAIN APP ---
+        const App = () => {
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [stage, setStage] = useState('summons');
+            const [showIntro, setShowIntro] = useState(true);
+            const bgAudioRef = useRef(null);
+
+            const startExperience = () => {
+                setShowIntro(false);
+                if (bgAudioRef.current) {
+                    bgAudioRef.current.volume = 0.5;
+                    bgAudioRef.current.play().catch(e => console.log("Audio play failed", e));
+                }
+            };
+            const handleSpecificSongPlay = () => bgAudioRef.current?.pause();
+            const handleSpecificSongPause = () => bgAudioRef.current?.play().catch(e => console.log("Resume bg failed", e));
+            const handleReviewEvidence = () => { setStage('evidence'); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+            const handleAcceptProposal = () => { 
+                setStage('success'); 
+                if(window.confetti) window.confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ef4444', '#b91c1c', '#ffffff'] }); 
+            };
+
+            if (!isAuthenticated) return <Login onLogin={() => setIsAuthenticated(true)} />;
+
+            return (
+                <div className="min-h-screen bg-[#1c1917] relative overflow-x-hidden">
+                    <audio ref={bgAudioRef} src="assets/music/background_theme.mp3" loop />
+                    
+                    {showIntro && (
+                        <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center p-4">
+                            <div className="max-w-md w-full text-center space-y-6">
+                                <div className="text-red-600 font-courier font-bold text-xl tracking-widest uppercase animate-pulse">System Alert</div>
+                                <h1 className="text-stone-100 text-3xl md:text-4xl font-black font-inter leading-tight">First things first...<br/><span className="text-stone-400">Let's fix the theme.</span></h1>
+                                <button onClick={startExperience} className="bg-stone-100 text-black hover:bg-white font-bold py-4 px-10 rounded-full text-lg shadow-[0_0_20px_rgba(255,255,255,0.3)] uppercase tracking-wide">► Play Theme</button>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="fixed inset-0 z-0 opacity-30 md:opacity-40 pointer-events-none select-none overflow-hidden">
+                        <svg className="absolute top-0 left-0 w-full h-full z-10 hidden md:block">
+                            <line x1="15%" y1="15%" x2="50%" y2="40%" stroke="#ef4444" strokeWidth="2" opacity="0.6" />
+                            <line x1="15%" y1="15%" x2="85%" y2="20%" stroke="#ef4444" strokeWidth="1" opacity="0.4" />
+                            <line x1="85%" y1="20%" x2="20%" y2="80%" stroke="#ef4444" strokeWidth="2" opacity="0.5" />
+                        </svg>
+                        <div className="absolute top-[3%] -left-[5%] md:top-[10%] md:left-[10%] w-32 h-32 md:w-48 md:h-48 bg-yellow-200 rotate-[15deg] md:rotate-[-5deg] shadow-lg p-3 md:p-4 font-courier text-[10px] md:text-sm text-gray-800 flex flex-col items-center justify-center transform hover:scale-105 transition-transform opacity-60 md:opacity-100">
+                            <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-red-600 absolute -top-1 left-1/2 -translate-x-1/2 shadow-sm"></div>
+                            <p className="font-bold text-red-700 uppercase border-b border-red-700 mb-1 md:mb-2">Profile</p>
+                            <p className="text-center leading-tight">Extremely dangerous. Uses cuteness as a weapon.</p>
+                        </div>
+                        <div className="absolute bottom-[20%] -right-[5%] md:bottom-[15%] md:right-[5%] w-32 h-32 md:w-40 md:h-40 bg-white shadow-lg rotate-[-15deg] md:rotate-[-8deg] p-4 flex items-center justify-center opacity-60 md:opacity-100">
+                             <div className="w-4 h-4 rounded-full bg-red-600 absolute -top-2 left-1/2 -translate-x-1/2 shadow-sm"></div>
+                             <p className="font-courier text-red-600 font-bold text-xl text-center border-4 border-red-600 p-2 rounded transform rotate-[-5deg]">GUILTY</p>
+                        </div>
+                    </div>
+
+                    {stage === 'summons' && !showIntro && <Summons onReview={handleReviewEvidence} />}
+                    
+                    {(stage === 'evidence' || stage === 'success') && !showIntro && (
+                        <div className="animate-in fade-in duration-1000 relative z-10">
+                            <Evidence onAudioPlay={handleSpecificSongPlay} onAudioPause={handleSpecificSongPause} />
+                            <Proposal onAccept={handleAcceptProposal} />
+                        </div>
+                    )}
+                    
+                    {stage === 'success' && <Success />}
+
+                    {/* --- GLOBAL FOOTER --- */}
+                    <div className="fixed bottom-2 w-full text-center z-50 pointer-events-none">
+                        <p className="text-[10px] text-stone-500 font-courier opacity-50">made with ❤️ by zeesh</p>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
